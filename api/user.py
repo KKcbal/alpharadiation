@@ -22,27 +22,25 @@ class UserAPI:
             if name is None or len(name) < 2:
                 return {'message': f'Name is missing, or is less than 2 characters'}, 210
             # validate uid
-            uid = body.get('uid')
-            if uid is None or len(uid) < 2:
-                return {'message': f'User ID is missing, or is less than 2 characters'}, 210
-            # look for password and dob
-            password = body.get('password')
-            dob = body.get('dob')
+            email = body.get('email')
+            if email is None or len(email) < 2:
+                return {'message': f'Email is missing, or is less than 2 characters'}, 210
+            cat = body.get('cat')
+            if cat is None or len(cat) < 0:
+                return {'message': f'Cat is missing, or is less than 0 characters'}, 210
+            pin = body.get('pin')
+            if pin is None or len(pin) < 2:
+                return {'message': f'Pin is missing, or is less than 2 characters'}, 210
 
             ''' #1: Key code block, setup USER OBJECT '''
             uo = User(name=name, 
-                      uid=uid)
+                      email=email)
             
             ''' Additional garbage error checking '''
             # set password if provided
-            if password is not None:
-                uo.set_password(password)
+            
             # convert to date type
-            if dob is not None:
-                try:
-                    uo.dob = datetime.strptime(dob, '%m-%d-%Y').date()
-                except:
-                    return {'message': f'Date of birth format error {dob}, must be mm-dd-yyyy'}, 210
+            
             
             ''' #2: Key Code block to add user to database '''
             # create user in database
@@ -51,7 +49,7 @@ class UserAPI:
             if user:
                 return jsonify(user.read())
             # failure returns error
-            return {'message': f'Processed {name}, either a format error or User ID {uid} is duplicate'}, 210
+            return {'message': f'Processed {name}, either a format error or Pin {pin} is duplicate'}, 210
 
     class _Read(Resource):
         def get(self):
